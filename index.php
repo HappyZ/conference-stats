@@ -7,27 +7,42 @@
 
 <?php 
 	// specify:
-
 	$hotcrpURL = //'conference url';
 	$usr = //'username (email) address';
 	$pwd = //'password';
-
-	$ch = curl_init();
-	$err = initializeFetch( $ch, $hotcrpURL, $usr, $pwd );
-	if ( $err == 1)
+	
+	$fileName = 'nsdi16';
+	
+	if ( file_exists( $cachePATH.$fileName ) ) 
 	{
-		die('This is NOT hotcrp');
+		$info = json_decode( ( file_get_contents( $cachePATH.$fileName ) ), true );
+		$curNum = $info["curNum"];
 	}
-	if ( $err == 2)
+	else
 	{
-		die('Cannot find 8-char postcode');
+		$ch = curl_init();
+		$err = initializeFetch( $ch, $hotcrpURL, $usr, $pwd );
+		if ( $err == 1)
+		{
+			die('This is NOT hotcrp');
+		}
+		if ( $err == 2)
+		{
+			die('Cannot find 8-char postcode');
+		}
+		if ( $err == 3)
+		{
+			die('Cannot log in');
+		}
+		$curNum = searchMaxPaperNum( $ch, $hotcrpURL);
+		$info = array( 'curNum' => $curNum );
+		$fp = fopen($cachePATH.$fileName, 'w');
+		fwrite( $fp, json_encode( $info ) );
+		fclose( $fp );
+	// 	isPaperExist( $ch, $hotcrpURL, 500);
+		curl_close($ch);
 	}
-	if ( $err == 3)
-	{
-		die('Cannot log in');
-	}
-	isPaperExist( $ch, $hotcrpURL, 500);
-	curl_close($ch);
+	echo $curNum;
 ?>
 
 <?php require_once 'footer.php'; ?>
