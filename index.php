@@ -2,6 +2,7 @@
 	/* this page is index */
 	$thisPage = "index";
 	require_once 'funcs/hotcrpFetch.php';
+	require_once 'funcs/misc.php';
 	require_once 'header.php'; 
 ?>
 
@@ -34,7 +35,7 @@
 		{
 			die('Cannot log in');
 		}
-		$curNum = searchMaxPaperNum( $ch, $hotcrpURL);
+		$curNum = searchMaxPaperNum( $ch, $hotcrpURL, "/paper/", null, 2000, 1);
 		$info = array( 'curNum' => $curNum );
 		$fp = fopen($cachePATH.$fileName, 'w');
 		fwrite( $fp, json_encode( $info ) );
