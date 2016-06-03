@@ -8,42 +8,39 @@
 
 <?php 
 	// specify:
-	$hotcrpURL = //'conference url';
-	$usr = //'username (email) address';
-	$pwd = //'password';
-	
-	$fileName = 'nsdi16';
-	
-	if ( file_exists( $cachePATH.$fileName ) ) 
+	$confbrev = 'hotmobile16';
+	$updateFreq = 3600; // seconds
+
+	$namerow = getCurrentConfNum($confbrev);
+	$currentT = time();
+	$updateRequired = false;
+
+	if ( is_null($namerow) )
 	{
-		$info = json_decode( ( file_get_contents( $cachePATH.$fileName ) ), true );
-		$curNum = $info["curNum"];
+		$updateRequired = true;
+		$paperurl = 'https://hotmobile16.hotcrp.com';
+		$fullname = 'International Workshop on Mobile Computing Systems and Applications';
 	}
 	else
 	{
-		$ch = curl_init();
-		$err = initializeFetch( $ch, $hotcrpURL, $usr, $pwd );
-		if ( $err == 1)
-		{
-			die('This is NOT hotcrp');
-		}
-		if ( $err == 2)
-		{
-			die('Cannot find 8-char postcode');
-		}
-		if ( $err == 3)
-		{
-			die('Cannot log in');
-		}
-		$curNum = searchMaxPaperNum( $ch, $hotcrpURL, "/paper/", null, 2000, 1);
-		$info = array( 'curNum' => $curNum );
-		$fp = fopen($cachePATH.$fileName, 'w');
-		fwrite( $fp, json_encode( $info ) );
-		fclose( $fp );
-	// 	isPaperExist( $ch, $hotcrpURL, 500);
-		curl_close($ch);
+		echo "<p>".$namerow[ "id" ]." | ".$namerow[ "confbrev" ]." | ".$namerow["paperurl"]." | ".$namerow["papercount"]." | ".$namerow["lastupdate"]."</p>";
+		$paperurl = $namerow["paperurl"];
+		if ( $namerow["lastupdate"] < ($currentT - $updateFreq) ) $updateRequired = true;
 	}
-	echo $curNum;
+
+	if ( $updateRequired )
+	{
+		echo $currentT;
+		$curNum = fetchCurNum($paperurl, "/paper/", null, 2000, 1);
+		if ( is_null($namerow) )
+			addRecord($confbrev, $paperurl, $curNum, $fullname, $currentT);
+		else
+			updateCurrentConfNum($confbrev, $curNum, $currentT);
+	}
+	
+	$namerow = getCurrentConfNum($confbrev);
+	echo "<p>".$namerow[ "id" ]." | ".$namerow[ "confbrev" ]." | ".$namerow["paperurl"]." | ".$namerow["papercount"]." | ".$namerow["lastupdate"]."</p>";
+	
 ?>
 
 <?php require_once 'footer.php'; ?>
