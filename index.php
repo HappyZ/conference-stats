@@ -1,46 +1,32 @@
 <?php 
-	/* this page is index */
-	$thisPage = "index";
-	require_once 'funcs/hotcrpFetch.php';
-	require_once 'funcs/misc.php';
-	require_once 'header.php'; 
+// HappyZ
+// Last updated: Jun. 3, 2016
+
+/* this page is index */
+$thisPage = "index";
+require_once 'funcs/misc.php';
+require_once 'header.php'; 
 ?>
 
-<?php 
-	// specify:
-	$confbrev = 'hotmobile16';
-	$updateFreq = 3600; // seconds
+<form action="ajax.php" method="post">
+Conference Abbreviation: <input type="text" name="cb"><br>
+Conference Full Name: <input type="text" name="fn"><br>
+Submission URL: <input type="text" name="pu"><br>
+<input type="submit">
+</form>
 
-	$namerow = getCurrentConfNum($confbrev);
-	$currentT = time();
-	$updateRequired = false;
-
-	if ( is_null($namerow) )
-	{
-		$updateRequired = true;
-		$paperurl = 'https://hotmobile16.hotcrp.com';
-		$fullname = 'International Workshop on Mobile Computing Systems and Applications';
-	}
-	else
-	{
-		echo "<p>".$namerow[ "id" ]." | ".$namerow[ "confbrev" ]." | ".$namerow["paperurl"]." | ".$namerow["papercount"]." | ".$namerow["lastupdate"]."</p>";
-		$paperurl = $namerow["paperurl"];
-		if ( $namerow["lastupdate"] < ($currentT - $updateFreq) ) $updateRequired = true;
-	}
-
-	if ( $updateRequired )
-	{
-		echo $currentT;
-		$curNum = fetchCurNum($paperurl, "/paper/", null, 2000, 1);
-		if ( is_null($namerow) )
-			addRecord($confbrev, $paperurl, $curNum, $fullname, $currentT);
-		else
-			updateCurrentConfNum($confbrev, $curNum, $currentT);
-	}
-	
-	$namerow = getCurrentConfNum($confbrev);
-	echo "<p>".$namerow[ "id" ]." | ".$namerow[ "confbrev" ]." | ".$namerow["paperurl"]." | ".$namerow["papercount"]." | ".$namerow["lastupdate"]."</p>";
-	
+<ul id='conflist'>
+<?php
+$currentT = time();
+$results = getAllStats();
+while ( $namerow = $results->fetch_assoc() )
+{
+	echo "<a href='" . $namerow["paperurl"] . "' target='_blank'><li class='left'><span class='confbrev'>" . $namerow["confbrev"] . "</span><span class='currentnumber'>" . $namerow["papercount"] . "</span><span class='lastupdate'>" . lastupdateSentiment( $currentT - $namerow["lastupdate"] ) . "</span><span class='fullname'>" . $namerow["fullname"] . "</span></li></a>";
+}
+$results->free();
 ?>
+</ul>
+
+<div class="clear"></div>
 
 <?php require_once 'footer.php'; ?>
