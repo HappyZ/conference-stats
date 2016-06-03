@@ -15,7 +15,7 @@ $confbrev = preg_replace("/[^a-zA-Z0-9]+/", "", htmlspecialchars($_POST["cb"]));
 $paperurl = htmlspecialchars($_POST["pu"]);
 $fullname = htmlspecialchars($_POST["fn"]);
 
-if ( empty($confbref) || empty($paperurl) || empty($fullname) )
+if ( empty($confbrev) || empty($paperurl) && empty($fullname) )
 {
 	die( 'Incorrect parameters' );
 }
