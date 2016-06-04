@@ -8,13 +8,6 @@ require_once 'funcs/misc.php';
 require_once 'header.php'; 
 ?>
 
-<form action="ajax.php" method="post">
-Conference Abbreviation: <input type="text" name="cb"><br>
-Conference Full Name: <input type="text" name="fn"><br>
-Submission URL: <input type="text" name="pu"><br>
-<input type="submit">
-</form>
-
 <ul id='conflist'>
 <?php
 $currentT = time();
@@ -25,8 +18,21 @@ while ( $namerow = $results->fetch_assoc() )
 }
 $results->free();
 ?>
+
+<form id="ajaxform" class="left" action="ajax.php" method="post">
+<div class="left">
+	<input class="input_text" placeholder="Conference Abbreviation" type="text" name="cb" required>
+	<input class="input_text" placeholder="Conference Full Name" type="text" name="fn">
+	<input class="input_text" placeholder="Submission URL" type="text" name="pu">
+</div>
+<input class="input_submit left" type="submit" value="&#x2714;">
+<span class="clear"></span>
+</form>
+
 </ul>
 
 <div class="clear"></div>
+
+
 
 <?php require_once 'footer.php'; ?>

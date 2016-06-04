@@ -14,6 +14,10 @@ background:#fff;
 color:#333
 }
 
+input {
+font-family:Palatino, 'Palatino Linotype', arial,sans-serif;
+}
+
 a,a:hover {
 color: #333;
 }
@@ -27,7 +31,7 @@ margin: 0 auto;
 
 }
 
-#conflist li {
+#conflist li, #ajaxform {
 position: relative;
 display: block;
 width: 290px;
@@ -44,6 +48,7 @@ left: 10px;
 display: inline-block;
 text-transform:uppercase;
 font-weight: bold;
+font-size:16px;
 }
 
 .currentnumber {
@@ -76,6 +81,62 @@ width: 290px;
 overflow: hidden;
 word-wrap: break-word;
 font-size:12px;
+}
+
+/* form */
+#ajaxform div {
+height:130px;
+width:250px;
+}
+
+.input_text {
+font-size:15px;
+height:15px;
+display: block;
+width: 230px;
+padding: 5px;
+margin: 15px 0;
+border: none;
+border-bottom: solid 1px #333;
+-webkit-transition: all 0.3s cubic-bezier(0.64, 0.09, 0.08, 1);
+transition: all 0.3s cubic-bezier(0.64, 0.09, 0.08, 1);
+background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0) 96%, #333 4%);
+background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 96%, #333 4%);
+background-position: -240px 0;
+background-size: 240px 100%;
+background-repeat: no-repeat;
+color: #0e6252;
+}
+
+.input_text:focus {
+box-shadow: none;
+outline: none;
+background-position: 0 0;
+}
+
+.input_text::-webkit-input-placeholder {
+font-size:15px;
+-webkit-transition: all 0.3s ease-in-out;
+transition: all 0.3s ease-in-out;
+}
+
+.input_text:focus::-webkit-input-placeholder {
+color: #333;
+font-size: 10px;
+-webkit-transform: translateY(-16px);
+transform: translateY(-16px);
+visibility: visible !important;
+}
+
+.input_submit {
+display:block;
+width:40px;
+height:130px;
+font-size:20px;
+padding:0;
+border:none;
+background:none;
+background-color: #ddd;
 }
 
 /* misc */
