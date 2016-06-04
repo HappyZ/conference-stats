@@ -24,7 +24,7 @@ $(function() {
 						if (data['error'].length) {
 							alert(data['error']);
 						} else {
-							$('#conflist').prepend("<a href='" + pu + "' target='_blank'><li class='left'><span class='confbrev'>" + cb + "</span><span class='currentnumber'>" + data['papercount'] + "</span><span class='lastupdate'>" + data['lastupdate'] + "</span><span class='fullname'>" + fn + "</span></li></a>");
+							$('#conflist').prepend("<a href='" + pu + "' target='_blank'><li class='left'><span class='confbrev'>" + cb + "</span><span class='fullname'>" + fn + "</span><span class='currentnumber'>" + data['papercount'] + "</span><span class='lastupdate'>" + data['lastupdate'] + "</span></li></a>");
 						}
 					} else {
 						// console.log(eOnPage.children("span[class='currentnumber']").html());

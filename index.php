@@ -14,7 +14,7 @@ $currentT = time();
 $results = getAllStats();
 while ( $namerow = $results->fetch_assoc() )
 {
-	echo "<a href='" . $namerow["paperurl"] . "' target='_blank'><li class='left'><span class='confbrev'>" . $namerow["confbrev"] . "</span><span class='currentnumber'>" . $namerow["papercount"] . "</span><span class='lastupdate'>" . lastupdateSentiment( $currentT - $namerow["lastupdate"] ) . "</span><span class='fullname'>" . $namerow["fullname"] . "</span></li></a>";
+	echo "<a href='" . $namerow["paperurl"] . "' target='_blank'><li class='left'><span class='confbrev'>" . $namerow["confbrev"] . "</span><span class='fullname'>" . $namerow["fullname"] . "</span><span class='currentnumber'>" . $namerow["papercount"] . "</span><span class='lastupdate'>" . lastupdateSentiment( $currentT - $namerow["lastupdate"] ) . "</span></li></a>";
 }
 $results->free();
 ?>
