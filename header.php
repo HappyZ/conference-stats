@@ -1,6 +1,7 @@
 <?php
 // HappyZ
-// Last updated: Mar. 18, 2016
+// Last updated: June. 5, 2016
+date_default_timezone_set('America/Los_Angeles');
 $siteName = "Conference-Stats";
 $siteAuthor = "HappyZ";
 $copyright_year = "2016";

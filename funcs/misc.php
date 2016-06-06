@@ -1,6 +1,6 @@
 <?php
 // HappyZ
-// Last updated: Jun. 3, 2016
+// Last updated: Jun. 4, 2016
 
 /*
 ** Utilize MariaDB database for storing and fetching records
@@ -19,32 +19,31 @@ $database_username = "someuser";
 $database_password = "somepassword";
 $database_name = "conferencestats";
 
-function initializeTable()
-{
+function initializeTable() {
 	global $database_username, $database_password, $database_name;
 	$connect = new mysqli( "localhost", $database_username, $database_password, $database_name);
-	$confbrev = $connect->real_escape_string($confbrev);
 	if( $connect->connect_errno ) {
-		exit( "Unable to connect to MariaDB:".$connect->connect_error );
+		die( "Unable to connect to MariaDB:".$connect->connect_error );
 	}
-	$connect->query( "CREATE TABLE stats ( id INT(5) NOT NULL auto_increment, confbrev VARCHAR(20) NOT NULL, paperurl VARCHAR(50) NOT NULL, papercount INT(5) NOT NULL, fullname VARCHAR(150) NOT NULL, lastupdate INT(10) NOT NULL, PRIMARY KEY(id) );" );
+	$test = $connect->query( "select id from stats limit 1" );
+	if (empty($test)) {
+		$connect->query( "CREATE TABLE stats ( id INT(5) NOT NULL auto_increment, confbrev VARCHAR(20) NOT NULL, paperurl VARCHAR(50) NOT NULL, papercount INT(5) NOT NULL, fullname VARCHAR(150) NOT NULL, lastupdate INT(10) NOT NULL, deadline_reg INT(10) NOT NULL, deadline_sub INT(10) NOT NULL, PRIMARY KEY(id) );" );
+	}
+	$connect->close();
 }
 
-function getAllStats()
-{
+function getAllStats() {
 	global $database_username, $database_password, $database_name;
 	$connect = new mysqli( "localhost", $database_username, $database_password, $database_name);
-	$confbrev = $connect->real_escape_string($confbrev);
 	if( $connect->connect_errno ) {
-		exit( "Unable to connect to MariaDB:".$connect->connect_error );
+		die( "Unable to connect to MariaDB:".$connect->connect_error );
 	}
 	$result = $connect->query( "SELECT * FROM stats;" );
 	$connect->close();
 	return $result;
 }
 
-function getCurrentConfStats($confbrev)
-{
+function getCurrentConfStats($confbrev) {
 	global $database_username, $database_password, $database_name;
 	$connect = new mysqli( "localhost", $database_username, $database_password, $database_name);
 	$confbrev = $connect->real_escape_string($confbrev);
@@ -72,16 +71,17 @@ function updateConfStats($confbrev, $newPaperNum, $currentT)
 	if( $connect->connect_errno ) {
 		exit( "Unable to connect to MariaDB:".$connect->connect_error );
 	}
-	$result = $connect->query( "UPDATE stats SET papercount = ".$newPaperNum.", lastupdate = ".$currentT." WHERE confbrev = '".$confbrev."';" );
-	if (!$result)
-	{
-		$connect->close();
-		echo "Unable to connect to update the entry: ".$connect->connect_error;
+	$result = $connect->query( "UPDATE stats SET papercount=".$newPaperNum.",lastupdate=".$currentT." WHERE confbrev = '".$confbrev."';" );
+	if (!$result) {
+		$feedback = "Unable to connect to update the entry: ".$connect->connect_error;
+	} else {
+		$feedback = "OK";
 	}
 	$connect->close();
+	return $feedback;
 }
 
-function addRecord($confbrev, $paperurl, $paperCount, $fullname, $currentT)
+function addRecord($confbrev, $paperurl, $paperCount, $fullname, $currentT, $deadlines)
 {
 	global $database_username, $database_password, $database_name;
 	$connect = new mysqli( "localhost", $database_username, $database_password, $database_name);
@@ -91,13 +91,14 @@ function addRecord($confbrev, $paperurl, $paperCount, $fullname, $currentT)
 	if( $connect->connect_errno ) {
 		exit( "Unable to connect to MariaDB:".$connect->connect_error );
 	}
-	$result = $connect->query( "INSERT into stats (confbrev, paperurl, papercount, fullname, lastupdate) values ('".$confbrev."', '".$paperurl."', ".$paperCount.", '".$fullname."', ".$currentT.");" );
-	if (!$result)
-	{
-		$connect->close();
-		echo "Unable to connect to update the entry: ".$connect->connect_error;
+	$result = $connect->query( "INSERT into stats (confbrev,paperurl,papercount,fullname,lastupdate,deadline_reg,deadline_sub) values ('".$confbrev."','".$paperurl."',".$paperCount.",'".$fullname."',".$currentT.",".$deadlines[0].",".$deadlines[1].");" );
+	if (!$result) {
+		$feedback = "Unable to connect to update the entry: ".$connect->connect_error;
+	} else {
+		$feedback = "OK";
 	}
 	$connect->close();
+	return $feedback;
 }
 
 function lastupdateSentiment($lastupdateTimeDelta)

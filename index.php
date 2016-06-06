@@ -5,6 +5,7 @@
 /* this page is index */
 $thisPage = "index";
 require_once 'funcs/misc.php';
+initializeTable();
 require_once 'header.php'; 
 ?>
 
@@ -12,11 +13,16 @@ require_once 'header.php';
 <?php
 $currentT = time();
 $results = getAllStats();
-while ( $namerow = $results->fetch_assoc() )
-{
-	echo "<a href='" . $namerow["paperurl"] . "' target='_blank'><li class='left'><span class='confbrev'>" . $namerow["confbrev"] . "</span><span class='fullname'>" . $namerow["fullname"] . "</span><span class='currentnumber'>" . $namerow["papercount"] . "</span><span class='lastupdate'>" . lastupdateSentiment( $currentT - $namerow["lastupdate"] ) . "</span></li></a>";
+if (!empty($results)) {
+	while ( $namerow = $results->fetch_assoc() ) {
+		$dreg = new DateTime("@".$namerow['deadline_reg'], new DateTimeZone('UTC'));
+		$dreg->setTimezone(new DateTimeZone(date_default_timezone_get()));
+		$dsub = new DateTime("@".$namerow['deadline_sub'], new DateTimeZone('UTC'));
+		$dsub->setTimezone(new DateTimeZone(date_default_timezone_get()));
+		echo "<a href='" . $namerow["paperurl"] . "' target='_blank'><li class='left'><span class='confbrev'>" . $namerow["confbrev"] . "</span><span class='fullname'>" . $namerow["fullname"] . "</span><span class='currentnumber'>" . $namerow["papercount"] . "</span><span class='deadlines'>Registration Due: " . $dreg->format('D, M d, Y g:i:s A') . "</span><span class='deadlines'>Submission Due: " . $dsub->format('D, M d, Y g:i:s A') . "</span><span class='lastupdate'>Updated " . lastupdateSentiment( $currentT - $namerow["lastupdate"] ) . "</span></li></a>";
+	}
+	$results->free();
 }
-$results->free();
 ?>
 
 <form id="ajaxform" class="left" action="ajax.php" method="post">
@@ -27,12 +33,11 @@ $results->free();
 </div>
 <input class="input_submit left" type="submit" value="&#x2714;">
 <span class="clear"></span>
+<span id="warningwords"></span>
 </form>
 
 </ul>
 
 <div class="clear"></div>
-
-
 
 <?php require_once 'footer.php'; ?>
